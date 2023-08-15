@@ -1,0 +1,30 @@
+version: '3.8' # Use the desired version of Docker Compose
+
+services:
+  postgres:
+    image: postgres:latest # Use the latest PostgreSQL image from Docker Hub
+    container_name: my-postgres-db # Set the name of the container
+    environment:
+      POSTGRES_DB: humanresources # Specify the name of the database
+      POSTGRES_USER: admin # Set the username for the database
+      POSTGRES_PASSWORD: admin#123 # Choose a secure password for the user
+    ports:
+      - "5432:5432" # Map host port to container port
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # Mount a volume for persistent data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: my-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: myemail@example.com
+      PGADMIN_DEFAULT_PASSWORD: mypgadminpassword
+    ports:
+      - "80:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+volumes:
+  postgres-data:
+  pgadmin-data:
+
+
