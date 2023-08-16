@@ -1,6 +1,6 @@
 # PostgreSQL Distilled: A practical guide for Fullstack Engineers
 
-## Blog Series 
+## The Series
 [PostgreSQL Distilled at Hashnode](https://blog.sagarmoy.work/series/db)
 
 
