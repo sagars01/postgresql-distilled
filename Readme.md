@@ -1,5 +1,9 @@
 # PostgreSQL Distilled: A practical guide for Fullstack Engineers
 
+## Blog Series 
+[PostgreSQL Distilled at Hashnode](https://blog.sagarmoy.work/series/db)
+
+
 ### Introduction
 1. **Why PostgreSQL?**
 2. **Target Audience**
