@@ -1,5 +1,5 @@
 CREATE TABLE employees (
-	employee_id VARCHAR(21) PRIMARY KEY,
+	id VARCHAR(21) PRIMARY KEY,
     first_name VARCHAR(50),
     gender VARCHAR(10),
     start_date DATE,
@@ -7,7 +7,8 @@ CREATE TABLE employees (
     salary INTEGER,
     bonus_percent DECIMAL(5,3),
     senior_management BOOLEAN,
-    team VARCHAR(50)
+    team VARCHAR(50),
+	employee_id VARCHAR(21)
 );
 
 
