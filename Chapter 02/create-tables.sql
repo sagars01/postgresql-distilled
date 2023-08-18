@@ -1,115 +1,55 @@
----STEP 1 : Execute these queries to create the mini HR Department
-
-BEGIN;
-
-
-CREATE TABLE IF NOT EXISTS public.compensation
-(
-    compensation_id integer NOT NULL DEFAULT nextval('compensation_compensation_id_seq'::regclass),
-    employee_id integer,
-    salary numeric(10, 2),
-    bonus numeric(10, 2),
-    date_updated date,
-    CONSTRAINT compensation_pkey PRIMARY KEY (compensation_id)
+-- Creating Employees Table
+CREATE TABLE Employees (
+    employee_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    address VARCHAR(255),
+    work_type VARCHAR(50) CHECK (work_type IN ('Remote', 'In-office')),
+    married BOOLEAN,
+    gender VARCHAR(10) CHECK (gender IN ('Male', 'Female', 'Other')),
+    hire_date DATE,
+    department_id INTEGER,
+    position_id INTEGER,
+    employee_type VARCHAR(50) CHECK (employee_type IN ('Full-time', 'Part-time', 'Contractor')),
+    manager_id INTEGER REFERENCES Employees(employee_id)
 );
 
-CREATE TABLE IF NOT EXISTS public.departments
-(
-    department_id integer NOT NULL DEFAULT nextval('departments_department_id_seq'::regclass),
-    name character varying(100) COLLATE pg_catalog."default",
-    head_id integer,
-    CONSTRAINT departments_pkey PRIMARY KEY (department_id)
+-- Creating Departments Table
+CREATE TABLE Departments (
+    department_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    head_id INTEGER REFERENCES Employees(employee_id)
 );
 
-CREATE TABLE IF NOT EXISTS public.employees
-(
-    employee_id integer NOT NULL DEFAULT nextval('employees_employee_id_seq'::regclass),
-    first_name character varying(50) COLLATE pg_catalog."default",
-    last_name character varying(50) COLLATE pg_catalog."default",
-    email character varying(100) COLLATE pg_catalog."default",
-    address character varying(255) COLLATE pg_catalog."default",
-    work_type character varying(50) COLLATE pg_catalog."default",
-    married boolean,
-    gender character varying(10) COLLATE pg_catalog."default",
-    hire_date date,
-    department_id integer,
-    position_id integer,
-    employee_type character varying(50) COLLATE pg_catalog."default",
-    manager_id integer,
-    CONSTRAINT employees_pkey PRIMARY KEY (employee_id)
+-- Creating Positions Table
+CREATE TABLE Positions (
+    position_id SERIAL PRIMARY KEY,
+    title VARCHAR(100),
+    primary_skillsets VARCHAR(255),
+    level VARCHAR(50),
+    next_level INTEGER REFERENCES Positions(position_id)
 );
 
-CREATE TABLE IF NOT EXISTS public.performance_reviews
-(
-    review_id integer NOT NULL DEFAULT nextval('performance_reviews_review_id_seq'::regclass),
-    employee_id integer,
-    date date,
-    rating integer,
-    comments text COLLATE pg_catalog."default",
-    CONSTRAINT performance_reviews_pkey PRIMARY KEY (review_id)
+-- Creating Performance_Reviews Table
+CREATE TABLE Performance_Reviews (
+    review_id SERIAL PRIMARY KEY,
+    employee_id INTEGER REFERENCES Employees(employee_id),
+    date DATE,
+    rating INTEGER,
+    comments TEXT
 );
 
-CREATE TABLE IF NOT EXISTS public.positions
-(
-    position_id integer NOT NULL DEFAULT nextval('positions_position_id_seq'::regclass),
-    title character varying(100) COLLATE pg_catalog."default",
-    primary_skillsets character varying(255) COLLATE pg_catalog."default",
-    level character varying(50) COLLATE pg_catalog."default",
-    next_level integer,
-    CONSTRAINT positions_pkey PRIMARY KEY (position_id)
+-- Creating Compensation Table
+CREATE TABLE Compensation (
+    compensation_id SERIAL PRIMARY KEY,
+    employee_id INTEGER REFERENCES Employees(employee_id),
+    salary NUMERIC(10, 2),
+    bonus NUMERIC(10, 2),
+    date_updated DATE
 );
 
-ALTER TABLE IF EXISTS public.compensation
-    ADD CONSTRAINT compensation_employee_id_fkey FOREIGN KEY (employee_id)
-    REFERENCES public.employees (employee_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.departments
-    ADD CONSTRAINT departments_head_id_fkey FOREIGN KEY (head_id)
-    REFERENCES public.employees (employee_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.employees
-    ADD CONSTRAINT "dept.fk" FOREIGN KEY (department_id)
-    REFERENCES public.departments (department_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-CREATE INDEX IF NOT EXISTS "fki_dept.fk"
-    ON public.employees(department_id);
-
-
-ALTER TABLE IF EXISTS public.employees
-    ADD CONSTRAINT employees_manager_id_fkey FOREIGN KEY (manager_id)
-    REFERENCES public.employees (employee_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.employees
-    ADD CONSTRAINT employees_position_id_fkey FOREIGN KEY (position_id)
-    REFERENCES public.positions (position_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.performance_reviews
-    ADD CONSTRAINT performance_reviews_employee_id_fkey FOREIGN KEY (employee_id)
-    REFERENCES public.employees (employee_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.positions
-    ADD CONSTRAINT positions_next_level_fkey FOREIGN KEY (next_level)
-    REFERENCES public.positions (position_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-END;
-
--- STEP 2: Import the data from mock-data folder using PgAdmin
+-- Adding Foreign Key Constraints to Employees Table
+ALTER TABLE Employees
+ADD FOREIGN KEY (department_id) REFERENCES Departments(department_id),
+ADD FOREIGN KEY (position_id) REFERENCES Positions(position_id);
